@@ -40,6 +40,7 @@ export class OrganizationLayoutComponent implements OnInit, OnDestroy {
         } else if (this.environmentService.baseUrl != null) {
             this.businessUrl = this.environmentService.baseUrl + '/portal';
         }
+        console.log(`OrgLayout(1):\n  businessUrl: ${this.businessUrl}\n  baseUrl: ${this.environmentService.baseUrl}`);
 
         document.body.classList.remove('layout_frontend');
         this.route.params.subscribe(async params => {
@@ -72,6 +73,7 @@ export class OrganizationLayoutComponent implements OnInit, OnDestroy {
         try {
             this.businessTokenPromise = this.apiService.getEnterprisePortalSignInToken();
             const token = await this.businessTokenPromise;
+            console.log(`OrgLayout(2):\n  token: ${token}`);
             if (token != null) {
                 const userId = await this.userService.getUserId();
                 this.platformUtilsService.launchUri(this.businessUrl + '/login?userId=' + userId +

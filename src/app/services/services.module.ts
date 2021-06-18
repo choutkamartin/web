@@ -145,19 +145,31 @@ export function initFactory(): Function {
     return async () => {
         await (storageService as HtmlStorageService).init();
 
-        if (process.env.ENV !== 'production' || platformUtilsService.isSelfHost()) {
+        if ( platformUtilsService.isSelfHost()) {
             environmentService.baseUrl = window.location.origin;
+        } else if (process.env.ENV === 'qa') {
+            environmentService.notificationsUrl = 'https://notifications.qa.bitwarden.com';
+            environmentService.enterpriseUrl = 'https://portal.qa.bitwarden.com';
+
+            apiService.setUrls({
+                base: window.location.origin,
+                api: 'https://api.qa.bitwarden.com',
+                identity: 'https://identity.qa.bitwarden.com',
+                events: 'https://events.qa.bitwarden.com',
+            });
+
         } else {
             environmentService.notificationsUrl = 'https://notifications.bitwarden.com';
             environmentService.enterpriseUrl = 'https://portal.bitwarden.com';
+
+            apiService.setUrls({
+                base: window.location.origin,
+                api: null,
+                identity: null,
+                events: null,
+            });
         }
 
-        apiService.setUrls({
-            base: window.location.origin,
-            api: null,
-            identity: null,
-            events: null,
-        });
         setTimeout(() => notificationsService.init(environmentService), 3000);
 
         vaultTimeoutService.init(true);
